@@ -77,6 +77,9 @@ const BOOTSTRAP = [
   { id: "spark-x2.6-4b", name: "Spark-X2.6-Lite", context: 1048576, output: 110000, free: true },
   { id: "spark-x2.5", name: "Spark-X2.5", context: 262144, output: 32768 },
   { id: "xopglm52", name: "GLM-5.2", context: 1048576, output: 32768 },
+  // 2026-11-24 桌面端目录已上 GLM-5.3 / 5.3-Flash（slug zhipu/*），model-manager API 还没给。
+  { id: "zhipu/glm-5.3", name: "GLM-5.3", context: 1048576, output: 32768 },
+  { id: "zhipu/glm-5.3-flash", name: "GLM-5.3-Flash", context: 1048576, output: 32768 },
   { id: "xopdeepseekv4pro0813", name: "DeepSeek-V4-Pro", context: 1048576, output: 32768 },
   { id: "xopdsv4flash0731in", name: "DeepSeek-V4-Flash", context: 1048576, output: 32768 },
   // 与 EXTRA_CATALOG 同步：目录接口没上这个模型时，网络故障分支也要能列出来。
@@ -92,6 +95,35 @@ const EXTRA_CATALOG = [
     display_name: "DeepSeek-V4.1-Flash",
     context_window: 1048576,
     max_output_tokens: 100000,
+    input_modalities: ["text"],
+    supported_in_api: true,
+    visibility: "list",
+    supported_reasoning_levels: [
+      { effort: "none", description: "关闭思考" },
+      { effort: "high", description: "高强度思考" },
+      { effort: "max", description: "最大强度思考" },
+    ],
+  },
+  // 2026-11-24 实测网关已接（HTTP 200 出 token），目录接口还没上。
+  {
+    slug: "zhipu/glm-5.3",
+    display_name: "GLM-5.3",
+    context_window: 1048576,
+    max_output_tokens: 32768,
+    input_modalities: ["text"],
+    supported_in_api: true,
+    visibility: "list",
+    supported_reasoning_levels: [
+      { effort: "none", description: "关闭思考" },
+      { effort: "high", description: "高强度思考" },
+      { effort: "max", description: "最大强度思考" },
+    ],
+  },
+  {
+    slug: "zhipu/glm-5.3-flash",
+    display_name: "GLM-5.3-Flash",
+    context_window: 1048576,
+    max_output_tokens: 32768,
     input_modalities: ["text"],
     supported_in_api: true,
     visibility: "list",

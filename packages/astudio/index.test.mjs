@@ -89,14 +89,16 @@ test("rowFromCatalogEntry degrades safely on sparse entries", () => {
 
 test("bootstrap table covers the observed catalog", () => {
   const rows = bootstrapRows()
-  assert.equal(Object.keys(rows).length, 8)
-  for (const id of ["astronclaw-auto", "spark-x2.6", "spark-x2.6-4b", "xopglm52", "xopdeepseekv4pro0813"]) {
+  assert.equal(Object.keys(rows).length, 10)
+  for (const id of ["astronclaw-auto", "spark-x2.6", "spark-x2.6-4b", "xopglm52", "xopdeepseekv4pro0813", "zhipu/glm-5.3", "zhipu/glm-5.3-flash"]) {
     assert.ok(rows[id], `missing ${id}`)
   }
   assert.equal(rows["spark-x2.6-4b"].free, true)
   assert.equal(rows["xopglm52"].limit.context, 1048576)
   // 目录接口尚未上、网关已接受的模型：目录读不到时也要能选到。
   assert.equal(rows["xdeepseek-flash-in"].name, "DeepSeek-V4.1-Flash")
+  assert.equal(rows["zhipu/glm-5.3"].name, "GLM-5.3")
+  assert.equal(rows["zhipu/glm-5.3-flash"].name, "GLM-5.3-Flash")
 })
 
 test("readAcodeConfigToken parses the astron-spark section", () => {
@@ -227,12 +229,14 @@ test("models hook maps the live catalog and keeps the old list on network failur
     },
   })
   const rows = await plugin.provider.models({ models: {} }, { auth: { type: "api", key: "k" } })
-  assert.deepEqual(Object.keys(rows), ["spark-x2.6-4b", "xopglm52", "xdeepseek-flash-in"])
+  assert.deepEqual(Object.keys(rows), ["spark-x2.6-4b", "xopglm52", "xdeepseek-flash-in", "zhipu/glm-5.3", "zhipu/glm-5.3-flash"])
   assert.equal(rows["spark-x2.6-4b"].free, true)
   // 目录没上的模型由 EXTRA_CATALOG 补位，形状与目录行一致（context/推理档位都在）。
   assert.equal(rows["xdeepseek-flash-in"].name, "DeepSeek-V4.1-Flash")
   assert.equal(rows["xdeepseek-flash-in"].limit.context, 1048576)
   assert.equal(rows["xdeepseek-flash-in"].reasoning, true)
+  assert.equal(rows["zhipu/glm-5.3"].name, "GLM-5.3")
+  assert.equal(rows["zhipu/glm-5.3-flash"].name, "GLM-5.3-Flash")
 
   const keep = createPlugin({ fetchImpl: async () => { throw new Error("down") } })
   const previousProvider = { models: { kept: true } }
@@ -271,6 +275,8 @@ test("EXTRA_CATALOG does not revive a slug the catalog delisted", async () => {
       data: { models: [
         { slug: "xopglm52", display_name: "GLM-5.2", visibility: "list", supported_in_api: true, supported_reasoning_levels: [{ effort: "none" }] },
         { slug: "xdeepseek-flash-in", display_name: "DeepSeek-V4.1-Flash", visibility: "hidden", supported_in_api: true, supported_reasoning_levels: [{ effort: "none" }] },
+        { slug: "zhipu/glm-5.3", display_name: "GLM-5.3", visibility: "hidden", supported_in_api: true, supported_reasoning_levels: [{ effort: "none" }] },
+        { slug: "zhipu/glm-5.3-flash", display_name: "GLM-5.3-Flash", visibility: "hidden", supported_in_api: true, supported_reasoning_levels: [{ effort: "none" }] },
       ] },
     }),
   })
